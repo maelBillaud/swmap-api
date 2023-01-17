@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATTERN_CONSOLE">
+            %5level %d{yyyy-MM-dd HH:mm:ss.SSS} ${hostName} --- [%15.15threadName] %-40.40class{1.} : %message%n%throwable{full}
+        </Property>
+        <Property name="LOG_PATTERN_FILE">
+            %5level %d{yyyy-MM-dd HH:mm:ss.SSS} ${hostName} --- [%15.15threadName] %-40.40class{1.} : %message%n%throwable{short.message}
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN_CONSOLE}"/>
+        </Console>
+        <RollingFile name="FileAppender" fileName="logs/logFile.log"
+                     filePattern="logs/logger-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN_FILE}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.webservices.swmap" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

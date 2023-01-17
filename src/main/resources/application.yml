@@ -1,0 +1,65 @@
+# URL de base des controller REST public
+url:
+  rest:
+    controller:
+      mapping:
+        public: /public/api/rest
+
+# Définition des requêtes nécessaires au fonctionnement du repository
+swmap:
+  request:
+    #
+    #-------------------------------- PARK --------------------------------
+    #
+    park:
+      create: INSERT INTO Park
+        (equipment_id, latitude, longitude, country, city, postcode, street, house_number, is_covered, verifierNumber, creation_agent, creation_date, modification_agent, modification_date)
+        VALUES (:equipment_id, :latitude, :longitude, :country, :city, :postcode, :street, :house_number, :is_covered, 0, :creation_agent, NOW(), :creation_agent, NOW())
+      update: UPDATE Park
+        SET latitude = :latitude, longitude = :longitude, country = :country, city = :city, postcode = :postcode, street = :street, house_number = :house_number, is_covered = :is_covered, modification_agent = :modification_agent, modification_date = NOW()
+        WHERE park_id = :park_id
+      update-verifier-number: UPDATE Park 
+        SET verifierNumber = :verifierNumber, modification_agent = :modification_agent, modification_date = NOW() 
+        WHERE park_id = :park_id
+      delete: DELETE FROM Park WHERE park_id = :park_id
+      get: SELECT park_id, p.equipment_id, horizontal_bar, parallel_bar, low_parallel_bar, espalier, fixed_rings, monkey_bridge,
+        latitude, longitude, country, city, postcode, street, house_number, is_covered, verifierNumber
+        FROM Park p INNER JOIN Equipment e ON p.equipment_id = e.equipment_id
+      getById: SELECT park_id, p.equipment_id, horizontal_bar, parallel_bar, low_parallel_bar, espalier, fixed_rings, monkey_bridge,
+        latitude, longitude, country, city, postcode, street, house_number, is_covered, verifierNumber
+        FROM Park p INNER JOIN Equipment e ON p.equipment_id = e.equipment_id
+        WHERE park_id = :park_id
+
+    #
+    #-------------------------------- EQUIPMENT --------------------------------
+    #
+    equipment:
+      create: INSERT INTO Equipment
+        (horizontal_bar, parallel_bar, low_parallel_bar, espalier, fixed_rings, monkey_bridge)
+        VALUES (:horizontal_bar, :parallel_bar, :low_parallel_bar, :espalier, :fixed_rings, :monkey_bridge)
+      update: UPDATE Equipment
+        SET horizontal_bar = :horizontal_bar, parallel_bar = :parallel_bar, low_parallel_bar = :low_parallel_bar, espalier = :espalier, fixed_rings = :fixed_rings, monkey_bridge = :monkey_bridge
+        WHERE equipment_id = :equipment_id
+      delete: DELETE FROM Equipment WHERE equipment_id = :equipment_id
+
+    #
+    #-------------------------------- USER --------------------------------
+    #
+    user:
+      create: INSERT INTO User
+        (name, username, birth_date, mail, password, creation_agent, creation_date, modification_agent, modification_date)
+        VALUES (:name, :username, :birth_date, :mail, :password, :creation_agent, NOW(), :creation_agent, NOW())
+      update: UPDATE User
+        SET name = :name, username = :username, birth_date = :birth_date, password = :password, modification_agent = :modification_agent, modification_date = NOW()
+        WHERE user_id = :user_id
+      getUserById: SELECT user_id, name, username, birth_date, level, mail, password, role
+        FROM User
+        WHERE user_id = :user_id
+      delete: DELETE FROM User WHERE user_id = :user_id
+
+    #
+    #-------------------------------- VERIFIER --------------------------------
+    #
+    verifier:
+      create: INSERT INTO Verifier (park_id, user_id, creation_agent, creation_date) VALUES (:park_id, :user_id, :creation_agent, NOW())
+      delete: DELETE FROM Verifier WHERE park_id = :park_id AND user_id = :user_id
